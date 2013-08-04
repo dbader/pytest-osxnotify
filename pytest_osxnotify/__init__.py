@@ -47,8 +47,8 @@ def swizzle(cls, SEL, func):
 
 def notify(title, subtitle=None):
     """Display a NSUserNotification on Mac OS X >= 10.8"""
+    global objc
     if not objc:
-        global objc
         objc = __import__("objc")
         swizzle(objc.lookUpClass('NSBundle'),
                 b'bundleIdentifier',
