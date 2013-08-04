@@ -1,6 +1,6 @@
 from distutils.core import setup
 
-__VERSION__ = '0.1.1'
+__VERSION__ = '0.1.2'
 __URL__ = 'https://github.com/dbader/pytest-osxnotify'
 __DOWNLOAD_URL__ = (__URL__ + '/tarball/' + __VERSION__)
 
