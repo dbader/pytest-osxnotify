@@ -1,5 +1,8 @@
 # needs pyobjc-core
-import objc
+
+# Lazy-import pyobjc to work around a conflict with pytest-xdist
+# looponfail on Python 3.3
+objc = None
 
 
 def pytest_addoption(parser):
@@ -33,8 +36,24 @@ def pytest_terminal_summary(terminalreporter):
         notify("py.test", msg)
 
 
+def swizzle(cls, SEL, func):
+    old_IMP = cls.instanceMethodForSelector_(SEL)
+    def wrapper(self, *args, **kwargs):
+        return func(self, old_IMP, *args, **kwargs)
+    new_IMP = objc.selector(wrapper, selector=old_IMP.selector,
+                            signature=old_IMP.signature)
+    objc.classAddMethod(cls, SEL, new_IMP)
+
+
 def notify(title, subtitle=None):
     """Display a NSUserNotification on Mac OS X >= 10.8"""
+    if not objc:
+        global objc
+        objc = __import__("objc")
+        swizzle(objc.lookUpClass('NSBundle'),
+                b'bundleIdentifier',
+                swizzled_bundleIdentifier)
+
     NSUserNotification = objc.lookUpClass('NSUserNotification')
     NSUserNotificationCenter = objc.lookUpClass('NSUserNotificationCenter')
     if not NSUserNotification or not NSUserNotificationCenter:
@@ -50,40 +69,6 @@ def notify(title, subtitle=None):
     notification_center.deliverNotification_(notification)
 
 
-def swizzle(*args):
-    """
-    Decorator to override an ObjC selector's implementation with a
-    custom implementation ("method swizzling").
-
-    Use like this:
-
-    @swizzle(NSOriginalClass, 'selectorName')
-    def swizzled_selectorName(self, original):
-        --> `self` points to the instance
-        --> `original` is the original implementation
-
-    Originally from http://klep.name/programming/python/
-
-    (The link was dead on 2013-05-22 but the Google Cache version works:
-    http://goo.gl/ABGvJ)
-    """
-    cls, SEL = args
-
-    def decorator(func):
-        old_IMP = cls.instanceMethodForSelector_(SEL)
-
-        def wrapper(self, *args, **kwargs):
-            return func(self, old_IMP, *args, **kwargs)
-
-        new_IMP = objc.selector(wrapper, selector=old_IMP.selector,
-                                signature=old_IMP.signature)
-        objc.classAddMethod(cls, SEL, new_IMP)
-        return wrapper
-
-    return decorator
-
-
-@swizzle(objc.lookUpClass('NSBundle'), b'bundleIdentifier')
 def swizzled_bundleIdentifier(self, original):
     """Swizzle [NSBundle bundleIdentifier] to make NSUserNotifications
     work.
