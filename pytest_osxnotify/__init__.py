@@ -1,4 +1,7 @@
-# needs pyobjc-core
+# pytest-osxnotify
+# Mac OS X notification center support for py.test
+# Requirements: pyobjc-core
+import time
 
 # Lazy-import pyobjc to work around a conflict with pytest-xdist
 # looponfail on Python 3.3
@@ -20,20 +23,21 @@ def pytest_sessionstart(session):
 
 
 def pytest_terminal_summary(terminalreporter):
-    if terminalreporter.config.option.osxnotify:
-        tr = terminalreporter
-        passes = len(tr.stats.get('passed', []))
-        fails = len(tr.stats.get('failed', []))
-        skips = len(tr.stats.get('deselected', []))
-        if passes + fails + skips == 0:
-            msg = "No tests ran"
-        elif passes > 0 and fails == 0:
-            msg = 'Success - %i Passed' % passes
-        elif not skips:
-            msg = "%s Passed %s Failed" % (passes, fails)
-        else:
-            msg = "%s Passed %s Failed %s Skipped" % (passes, fails, skips)
-        notify("py.test", msg)
+    if not terminalreporter.config.option.osxnotify:
+        return
+    tr = terminalreporter
+    passes = len(tr.stats.get('passed', []))
+    fails = len(tr.stats.get('failed', []))
+    skips = len(tr.stats.get('deselected', []))
+    if passes + fails + skips == 0:
+        msg = "No tests ran"
+    elif passes > 0 and fails == 0:
+        msg = 'Success - %i Passed' % passes
+    elif not skips:
+        msg = "%s Passed %s Failed" % (passes, fails)
+    else:
+        msg = "%s Passed %s Failed %s Skipped" % (passes, fails, skips)
+    notify("py.test", msg)
 
 
 def swizzle(cls, SEL, func):
@@ -57,7 +61,7 @@ def notify(title, subtitle=None):
     NSUserNotification = objc.lookUpClass('NSUserNotification')
     NSUserNotificationCenter = objc.lookUpClass('NSUserNotificationCenter')
     if not NSUserNotification or not NSUserNotificationCenter:
-        print('no nsusernotification')
+        print('NSUserNotifcation is not supported by your version of Mac OS X')
         return
 
     notification = NSUserNotification.alloc().init()
@@ -67,6 +71,9 @@ def notify(title, subtitle=None):
 
     notification_center = NSUserNotificationCenter.defaultUserNotificationCenter()
     notification_center.deliverNotification_(notification)
+    # Delay a bit to ensure that all notifications get displayed
+    # even if py.test finishes very quickly.
+    time.sleep(0.1)
 
 
 def swizzled_bundleIdentifier(self, original):
