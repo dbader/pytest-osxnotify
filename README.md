@@ -18,7 +18,7 @@ $ pytest
 Meta
 ----
 
-Daniel Bader – `@dbader_org <https://twitter.com/dbader_org>`_ – mail@dbader.org
+Daniel Bader – [@dbader_org](https://twitter.com/dbader_org>) – mail@dbader.org
 
 Distributed under the MIT license. See ``LICENSE`` for more information.
 
