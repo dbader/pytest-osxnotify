@@ -29,14 +29,15 @@ def pytest_terminal_summary(terminalreporter):
     passes = len(tr.stats.get('passed', []))
     fails = len(tr.stats.get('failed', []))
     skips = len(tr.stats.get('deselected', []))
-    if passes + fails + skips == 0:
+    errors = len(tr.stats.get('error', []))
+    if errors + passes + fails + skips == 0:
         msg = "No tests ran"
-    elif passes > 0 and fails == 0:
+    elif passes and not (fails or errors):
         msg = 'Success - %i Passed' % passes
-    elif not skips:
+    elif not (skips or errors):
         msg = "%s Passed %s Failed" % (passes, fails)
     else:
-        msg = "%s Passed %s Failed %s Skipped" % (passes, fails, skips)
+        msg = "%s Passed %s Failed %s Errors %s Skipped" % (passes, fails, errors, skips)
     notify("py.test", msg)
 
 
