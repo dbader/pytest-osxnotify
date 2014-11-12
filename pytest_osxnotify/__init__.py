@@ -42,7 +42,7 @@ def pytest_terminal_summary(terminalreporter):
 
 
 def swizzle(cls, SEL, func):
-    old_IMP = cls.instanceMethodForSelector_(SEL)
+    old_IMP = getattr(cls, SEL)
     def wrapper(self, *args, **kwargs):
         return func(self, old_IMP, *args, **kwargs)
     new_IMP = objc.selector(wrapper, selector=old_IMP.selector,
