@@ -9,12 +9,17 @@ objc = None
 
 
 def pytest_addoption(parser):
-    """Adds options to control notifications."""
+    """
+    Adds options to control notifications.
+
+    """
     group = parser.getgroup('terminal reporting')
-    group.addoption('--osxnotify',
-                    dest='osxnotify',
-                    default=True,
-                    help='Enable Mac OS X notification center notifications.')
+    group.addoption(
+        '--osxnotify',
+        dest='osxnotify',
+        default=True,
+        help='Enable Mac OS X notification center notifications.'
+    )
 
 
 def pytest_sessionstart(session):
@@ -31,30 +36,43 @@ def pytest_terminal_summary(terminalreporter):
     skips = len(tr.stats.get('deselected', []))
     errors = len(tr.stats.get('error', []))
     if errors + passes + fails + skips == 0:
-        msg = "No tests ran"
+        msg = 'No tests ran'
     elif passes and not (fails or errors):
         msg = 'Success - %i Passed' % passes
     elif not (skips or errors):
-        msg = "%s Passed %s Failed" % (passes, fails)
+        msg = '%s Passed %s Failed' % (passes, fails)
     else:
-        msg = "%s Passed %s Failed %s Errors %s Skipped" % (passes, fails, errors, skips)
-    notify("py.test", msg)
+        msg = '%s Passed %s Failed %s Errors %s Skipped' % (
+            passes, fails, errors, skips
+        )
+    notify('py.test', msg)
 
 
 def swizzle(cls, SEL, func):
-    old_IMP = getattr(cls, SEL)
+    old_IMP = getattr(cls, SEL, None)
+    if old_IMP is None:
+        # This will work on OS X <= 10.9
+        old_IMP = cls.instanceMethodForSelector_(SEL)
+
     def wrapper(self, *args, **kwargs):
         return func(self, old_IMP, *args, **kwargs)
-    new_IMP = objc.selector(wrapper, selector=old_IMP.selector,
-                            signature=old_IMP.signature)
+
+    new_IMP = objc.selector(
+        wrapper,
+        selector=old_IMP.selector,
+        signature=old_IMP.signature
+    )
     objc.classAddMethod(cls, SEL, new_IMP)
 
 
 def notify(title, subtitle=None):
-    """Display a NSUserNotification on Mac OS X >= 10.8"""
+    """
+    Display a NSUserNotification on Mac OS X >= 10.8
+
+    """
     global objc
     if not objc:
-        objc = __import__("objc")
+        objc = __import__('objc')
         swizzle(objc.lookUpClass('NSBundle'),
                 b'bundleIdentifier',
                 swizzled_bundleIdentifier)
@@ -78,14 +96,15 @@ def notify(title, subtitle=None):
 
 
 def swizzled_bundleIdentifier(self, original):
-    """Swizzle [NSBundle bundleIdentifier] to make NSUserNotifications
-    work.
+    """
+    Swizzle [NSBundle bundleIdentifier] to make NSUserNotifications work.
 
     To post NSUserNotifications OS X requires the binary to be packaged
     as an application bundle. To circumvent this restriction, we modify
     `bundleIdentifier` to return a fake bundle identifier.
 
     Original idea for this approach by Norio Numura:
-        https://github.com/norio-nomura/usernotification
+    https://github.com/norio-nomura/usernotification
+
     """
     return 'com.apple.terminal'
