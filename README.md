@@ -13,7 +13,17 @@ Usage
 
 ```shell
 $ pip install pytest-osxnotify
-$ pytest
+$ py.test
+```
+
+How to test a change to the plugin
+----------------------------------
+
+```shell
+$ virtualenv venv && . venv/bin/activate
+$ pip install pytest -r requirements.txt
+$ python setup.py install
+$ venv/bin/py.test --traceconfig example_test.py -p pytest_osxnotify
 ```
 
 Meta
