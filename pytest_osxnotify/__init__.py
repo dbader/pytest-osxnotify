@@ -62,7 +62,7 @@ def swizzle(cls, SEL, func):
         selector=old_IMP.selector,
         signature=old_IMP.signature
     )
-    objc.classAddMethod(cls, SEL, new_IMP)
+    objc.classAddMethod(cls, SEL.encode(), new_IMP)
 
 
 def notify(title, subtitle=None):
@@ -74,7 +74,7 @@ def notify(title, subtitle=None):
     if not objc:
         objc = __import__('objc')
         swizzle(objc.lookUpClass('NSBundle'),
-                b'bundleIdentifier',
+                'bundleIdentifier',
                 swizzled_bundleIdentifier)
 
     NSUserNotification = objc.lookUpClass('NSUserNotification')
