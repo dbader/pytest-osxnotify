@@ -62,7 +62,7 @@ def swizzle(cls, SEL, func):
         selector=old_IMP.selector,
         signature=old_IMP.signature
     )
-    objc.classAddMethod(cls, SEL, new_IMP)
+    objc.classAddMethod(cls, SEL.encode(), new_IMP)
 
 
 def notify(title, subtitle=None):
