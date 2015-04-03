@@ -1,6 +1,6 @@
 from distutils.core import setup
 
-__VERSION__ = '0.1.5'
+__VERSION__ = '0.1.6'
 __URL__ = 'https://github.com/dbader/pytest-osxnotify'
 __DOWNLOAD_URL__ = (__URL__ + '/tarball/' + __VERSION__)
 
@@ -25,5 +25,6 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
     ]
 )

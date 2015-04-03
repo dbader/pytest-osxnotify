@@ -5,7 +5,9 @@ pytest-osxnotify
 [![PyPI](https://pypip.in/d/pytest-osxnotify/badge.png)](https://pypi.python.org/pypi/pytest-osxnotify)<br>
 ![Demo](https://raw.github.com/dbader/pytest-osxnotify/master/demo.gif)
 
-A py.test plugin that displays test results using native Mac OS X notifications (`NSUserNotification`). Works with Python 2.7 and 3.3 on Mountain Lion or better.
+A py.test plugin that displays test results using native Mac OS X
+notifications (`NSUserNotification`). Works with Python 2.7 and 3.3+ on
+Mountain Lion or better.
 
 
 Usage
@@ -24,6 +26,15 @@ $ virtualenv venv && . venv/bin/activate
 $ pip install pytest -r requirements.txt
 $ python setup.py install
 $ venv/bin/py.test --traceconfig example_test.py -p pytest_osxnotify
+```
+
+How to submit a new release to PyPi
+-----------------------------------
+
+```shell
+$ git tag X.Y.Z -m "Release X.Y.Z"
+$ git push --tags
+$ python setup.py publish
 ```
 
 Meta

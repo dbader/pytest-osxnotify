@@ -73,9 +73,11 @@ def notify(title, subtitle=None):
     global objc
     if not objc:
         objc = __import__('objc')
-        swizzle(objc.lookUpClass('NSBundle'),
-                b'bundleIdentifier',
-                swizzled_bundleIdentifier)
+        swizzle(
+            objc.lookUpClass('NSBundle'),
+            'bundleIdentifier',
+            swizzled_bundleIdentifier
+        )
 
     NSUserNotification = objc.lookUpClass('NSUserNotification')
     NSUserNotificationCenter = objc.lookUpClass('NSUserNotificationCenter')
