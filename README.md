@@ -34,7 +34,7 @@ How to submit a new release to PyPi
 ```shell
 $ git tag X.Y.Z -m "Release X.Y.Z"
 $ git push --tags
-$ python setup.py publish
+$ python setup.py sdist upload -r pypi
 ```
 
 Meta
