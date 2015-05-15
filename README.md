@@ -37,6 +37,13 @@ $ git push --tags
 $ python setup.py sdist upload -r pypi
 ```
 
+Changelog
+---------
+
+- **0.1.7**
+    - Tweaked the notification delay to ensure that success/error messages
+      are displayed.
+
 Meta
 ----
 
