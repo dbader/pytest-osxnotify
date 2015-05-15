@@ -46,6 +46,10 @@ def pytest_terminal_summary(terminalreporter):
             passes, fails, errors, skips
         )
     notify('py.test', msg)
+    # Delay a bit to ensure that all notifications get displayed
+    # even if py.test finishes very quickly.
+    # It's unfortunate that this is a magic value for now.
+    time.sleep(0.3)
 
 
 def swizzle(cls, SEL, func):
@@ -92,9 +96,6 @@ def notify(title, subtitle=None):
 
     notification_center = NSUserNotificationCenter.defaultUserNotificationCenter()
     notification_center.deliverNotification_(notification)
-    # Delay a bit to ensure that all notifications get displayed
-    # even if py.test finishes very quickly.
-    time.sleep(0.1)
 
 
 def swizzled_bundleIdentifier(self, original):
