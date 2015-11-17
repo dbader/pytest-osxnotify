@@ -1,8 +1,8 @@
 pytest-osxnotify
 ================
 
-[![PyPI](https://pypip.in/v/pytest-osxnotify/badge.png)](https://pypi.python.org/pypi/pytest-osxnotify)
-[![PyPI](https://pypip.in/d/pytest-osxnotify/badge.png)](https://pypi.python.org/pypi/pytest-osxnotify)<br>
+[![PyPI](https://img.shields.io/pypi/v/pytest-osxnotify.svg)](https://pypi.python.org/pypi/pytest-osxnotify)
+[![PyPI](https://img.shields.io/pypi/dm/pytest-osxnotify.svg)](https://pypi.python.org/pypi/pytest-osxnotify)<br>
 ![Demo](https://raw.github.com/dbader/pytest-osxnotify/master/demo.gif)
 
 A py.test plugin that displays test results using native Mac OS X
