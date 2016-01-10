@@ -16,7 +16,7 @@ setup(
         'pytest', 'pytest-', 'osx', 'notifications', 'mountainlion',
         'notificationcenter', 'py.test'],
     packages=['pytest_osxnotify'],
-    entry_points={'pytest11': ['pyest_osxnotify = pytest_osxnotify', ]},
+    entry_points={'pytest11': ['pytest_osxnotify = pytest_osxnotify', ]},
     install_requires=[
         'pyobjc-core',
     ],
